@@ -37,7 +37,10 @@ namespace Ape.Netcode
 
         private void ReceiveData(EndPoint endPoint, byte[] buffer, int receiveLength)
         {
-            Console.WriteLine($"[{endPoint}] {Encoding.UTF8.GetString(buffer)}");
+            var reader = new NetworkReader(buffer);
+            var number1 = reader.GetInt();
+            var number2 = reader.GetInt();
+            Console.WriteLine($"[{endPoint}] {number1} {number2}");
         }
     }
 }

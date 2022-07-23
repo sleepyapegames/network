@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 
 namespace Ape.Netcode
 {
@@ -24,6 +23,11 @@ namespace Ape.Netcode
             _socket.Bind(endPoint);
         }
 
+        public void Send(EndPoint endPoint, byte[] data)
+        {
+            _socket.SendTo(data, endPoint);
+        }
+
         public void Tick()
         {
             while (_socket.Poll(0, SelectMode.SelectRead))
@@ -36,7 +40,15 @@ namespace Ape.Netcode
 
         private void ReceiveData(EndPoint endPoint, byte[] buffer, int receiveLength)
         {
-            Console.WriteLine($"[{endPoint}] {Encoding.UTF8.GetString(buffer)}");
+            var reader = new NetworkReader(buffer);
+            var number = reader.GetInt();
+            var message = reader.GetString();
+            Console.WriteLine($"[{endPoint}] {number} {message}");
+
+            var writer = new NetworkWriter();
+            writer.Put(69);
+            writer.Put(420);
+            Send(endPoint, writer.Data);
         }
     }
 }
