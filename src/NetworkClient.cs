@@ -39,7 +39,7 @@ namespace Ape.Netcode
         private void ReceiveData(EndPoint endPoint, byte[] buffer, int receiveLength)
         {
             var reader = new NetworkReader(buffer);
-            var header = (NetworkHeader)reader.GetByte();
+            var header = (NetworkHeader)reader.ReadByte();
 
             Console.WriteLine(header);
         }

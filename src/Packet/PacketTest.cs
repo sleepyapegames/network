@@ -4,7 +4,7 @@ namespace Ape.Netcode
     {
         public string Message { get; set; }
 
-        protected override void Deserialize(NetworkReader reader) => Message = reader.GetString();
+        protected override void Deserialize(NetworkReader reader) => Message = reader.ReadString();
 
         protected override void Serialize(NetworkWriter writer) => writer.Put(Message);
     }

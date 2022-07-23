@@ -61,22 +61,22 @@ namespace Ape.Netcode
         public NetworkReader(byte[] source, int offset, int maxSize) =>
             SetSource(source, offset, maxSize);
 
-        #region GetMethods
-        public byte GetByte()
+        #region Read Methods
+        public byte ReadByte()
         {
             byte res = _data[_position];
             _position += 1;
             return res;
         }
 
-        public sbyte GetSByte()
+        public sbyte ReadSByte()
         {
             var b = (sbyte)_data[_position];
             _position++;
             return b;
         }
 
-        public bool[] GetBoolArray()
+        public bool[] ReadBoolArray()
         {
             ushort size = BitConverter.ToUInt16(_data, _position);
             _position += 2;
@@ -86,7 +86,7 @@ namespace Ape.Netcode
             return arr;
         }
 
-        public ushort[] GetUShortArray()
+        public ushort[] ReadUShortArray()
         {
             ushort size = BitConverter.ToUInt16(_data, _position);
             _position += 2;
@@ -96,7 +96,7 @@ namespace Ape.Netcode
             return arr;
         }
 
-        public short[] GetShortArray()
+        public short[] ReadShortArray()
         {
             ushort size = BitConverter.ToUInt16(_data, _position);
             _position += 2;
@@ -106,7 +106,7 @@ namespace Ape.Netcode
             return arr;
         }
 
-        public long[] GetLongArray()
+        public long[] ReadLongArray()
         {
             ushort size = BitConverter.ToUInt16(_data, _position);
             _position += 2;
@@ -116,7 +116,7 @@ namespace Ape.Netcode
             return arr;
         }
 
-        public ulong[] GetULongArray()
+        public ulong[] ReadULongArray()
         {
             ushort size = BitConverter.ToUInt16(_data, _position);
             _position += 2;
@@ -126,7 +126,7 @@ namespace Ape.Netcode
             return arr;
         }
 
-        public int[] GetIntArray()
+        public int[] ReadIntArray()
         {
             ushort size = BitConverter.ToUInt16(_data, _position);
             _position += 2;
@@ -136,7 +136,7 @@ namespace Ape.Netcode
             return arr;
         }
 
-        public uint[] GetUIntArray()
+        public uint[] ReadUIntArray()
         {
             ushort size = BitConverter.ToUInt16(_data, _position);
             _position += 2;
@@ -146,7 +146,7 @@ namespace Ape.Netcode
             return arr;
         }
 
-        public float[] GetFloatArray()
+        public float[] ReadFloatArray()
         {
             ushort size = BitConverter.ToUInt16(_data, _position);
             _position += 2;
@@ -156,7 +156,7 @@ namespace Ape.Netcode
             return arr;
         }
 
-        public double[] GetDoubleArray()
+        public double[] ReadDoubleArray()
         {
             ushort size = BitConverter.ToUInt16(_data, _position);
             _position += 2;
@@ -166,90 +166,87 @@ namespace Ape.Netcode
             return arr;
         }
 
-        public string[] GetStringArray()
+        public string[] ReadStringArray()
         {
-            ushort arraySize = GetUShort();
+            ushort arraySize = ReadUShort();
             var arr = new string[arraySize];
             for (int i = 0; i < arraySize; i++)
             {
-                arr[i] = GetString();
+                arr[i] = ReadString();
             }
             return arr;
         }
 
-        public string[] GetStringArray(int maxStringLength)
+        public string[] ReadStringArray(int maxStringLength)
         {
-            ushort arraySize = GetUShort();
+            ushort arraySize = ReadUShort();
             var arr = new string[arraySize];
             for (int i = 0; i < arraySize; i++)
             {
-                arr[i] = GetString(maxStringLength);
+                arr[i] = ReadString(maxStringLength);
             }
             return arr;
         }
 
-        public bool GetBool()
+        public bool ReadBool()
         {
             bool res = _data[_position] > 0;
             _position += 1;
             return res;
         }
 
-        public char GetChar()
-        {
-            return (char)GetUShort();
-        }
+        public char ReadChar() => (char)ReadUShort();
 
-        public ushort GetUShort()
+        public ushort ReadUShort()
         {
             ushort result = BitConverter.ToUInt16(_data, _position);
             _position += 2;
             return result;
         }
 
-        public short GetShort()
+        public short ReadShort()
         {
             short result = BitConverter.ToInt16(_data, _position);
             _position += 2;
             return result;
         }
 
-        public long GetLong()
+        public long ReadLong()
         {
             long result = BitConverter.ToInt64(_data, _position);
             _position += 8;
             return result;
         }
 
-        public ulong GetULong()
+        public ulong ReadULong()
         {
             ulong result = BitConverter.ToUInt64(_data, _position);
             _position += 8;
             return result;
         }
 
-        public int GetInt()
+        public int ReadInt()
         {
             int result = BitConverter.ToInt32(_data, _position);
             _position += 4;
             return result;
         }
 
-        public uint GetUInt()
+        public uint ReadUInt()
         {
             uint result = BitConverter.ToUInt32(_data, _position);
             _position += 4;
             return result;
         }
 
-        public float GetFloat()
+        public float ReadFloat()
         {
             float result = BitConverter.ToSingle(_data, _position);
             _position += 4;
             return result;
         }
 
-        public double GetDouble()
+        public double ReadDouble()
         {
             double result = BitConverter.ToDouble(_data, _position);
             _position += 8;
@@ -260,9 +257,9 @@ namespace Ape.Netcode
         /// Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
         /// </summary>
         /// <returns>"string.Empty" if value > "maxLength"</returns>
-        public string GetString(int maxLength)
+        public string ReadString(int maxLength)
         {
-            ushort size = GetUShort();
+            ushort size = ReadUShort();
             if (size == 0)
             {
                 return null;
@@ -274,7 +271,7 @@ namespace Ape.Netcode
                 return null;
             }
 
-            ArraySegment<byte> data = GetBytesSegment(actualSize);
+            ArraySegment<byte> data = ReadBytesSegment(actualSize);
 
             return (
                 maxLength > 0
@@ -284,9 +281,9 @@ namespace Ape.Netcode
                 : _uTF8Encoding.GetString(data.Array, data.Offset, data.Count);
         }
 
-        public string GetString()
+        public string ReadString()
         {
-            ushort size = GetUShort();
+            ushort size = ReadUShort();
             if (size == 0)
             {
                 return null;
@@ -298,26 +295,26 @@ namespace Ape.Netcode
                 return null;
             }
 
-            ArraySegment<byte> data = GetBytesSegment(actualSize);
+            ArraySegment<byte> data = ReadBytesSegment(actualSize);
 
             return _uTF8Encoding.GetString(data.Array, data.Offset, data.Count);
         }
 
-        public ArraySegment<byte> GetBytesSegment(int count)
+        public ArraySegment<byte> ReadBytesSegment(int count)
         {
             ArraySegment<byte> segment = new ArraySegment<byte>(_data, _position, count);
             _position += count;
             return segment;
         }
 
-        public ArraySegment<byte> GetRemainingBytesSegment()
+        public ArraySegment<byte> ReadRemainingBytesSegment()
         {
             ArraySegment<byte> segment = new ArraySegment<byte>(_data, _position, AvailableBytes);
             _position = _data.Length;
             return segment;
         }
 
-        public byte[] GetRemainingBytes()
+        public byte[] ReadRemainingBytes()
         {
             byte[] outgoingData = new byte[AvailableBytes];
             Buffer.BlockCopy(_data, _position, outgoingData, 0, AvailableBytes);
@@ -325,37 +322,37 @@ namespace Ape.Netcode
             return outgoingData;
         }
 
-        public void GetBytes(byte[] destination, int start, int count)
+        public void ReadBytes(byte[] destination, int start, int count)
         {
             Buffer.BlockCopy(_data, _position, destination, start, count);
             _position += count;
         }
 
-        public void GetBytes(byte[] destination, int count)
+        public void ReadBytes(byte[] destination, int count)
         {
             Buffer.BlockCopy(_data, _position, destination, 0, count);
             _position += count;
         }
 
-        public sbyte[] GetSBytesWithLength()
+        public sbyte[] ReadSBytesWithLength()
         {
-            int length = GetInt();
+            int length = ReadInt();
             sbyte[] outgoingData = new sbyte[length];
             Buffer.BlockCopy(_data, _position, outgoingData, 0, length);
             _position += length;
             return outgoingData;
         }
 
-        public byte[] GetBytesWithLength()
+        public byte[] ReadBytesWithLength()
         {
-            int length = GetInt();
+            int length = ReadInt();
             byte[] outgoingData = new byte[length];
             Buffer.BlockCopy(_data, _position, outgoingData, 0, length);
             _position += length;
             return outgoingData;
         }
 
-        public T Get<T>() where T : NetworkPacket, new()
+        public T Read<T>() where T : NetworkPacket, new()
         {
             var packet = new T();
             packet.InternalDeserialize(this);
@@ -430,43 +427,43 @@ namespace Ape.Netcode
         }
         #endregion
 
-        #region TryGetMethods
-        public bool TryGetByte(out byte result)
+        #region TryReadMethods
+        public bool TryReadByte(out byte result)
         {
             if (AvailableBytes >= 1)
             {
-                result = GetByte();
+                result = ReadByte();
                 return true;
             }
             result = 0;
             return false;
         }
 
-        public bool TryGetSByte(out sbyte result)
+        public bool TryReadSByte(out sbyte result)
         {
             if (AvailableBytes >= 1)
             {
-                result = GetSByte();
+                result = ReadSByte();
                 return true;
             }
             result = 0;
             return false;
         }
 
-        public bool TryGetBool(out bool result)
+        public bool TryReadBool(out bool result)
         {
             if (AvailableBytes >= 1)
             {
-                result = GetBool();
+                result = ReadBool();
                 return true;
             }
             result = false;
             return false;
         }
 
-        public bool TryGetChar(out char result)
+        public bool TryReadChar(out char result)
         {
-            if (!TryGetUShort(out ushort uShortValue))
+            if (!TryReadUShort(out ushort uShortValue))
             {
                 result = '\0';
                 return false;
@@ -475,102 +472,102 @@ namespace Ape.Netcode
             return true;
         }
 
-        public bool TryGetShort(out short result)
+        public bool TryReadShort(out short result)
         {
             if (AvailableBytes >= 2)
             {
-                result = GetShort();
+                result = ReadShort();
                 return true;
             }
             result = 0;
             return false;
         }
 
-        public bool TryGetUShort(out ushort result)
+        public bool TryReadUShort(out ushort result)
         {
             if (AvailableBytes >= 2)
             {
-                result = GetUShort();
+                result = ReadUShort();
                 return true;
             }
             result = 0;
             return false;
         }
 
-        public bool TryGetInt(out int result)
+        public bool TryReadInt(out int result)
         {
             if (AvailableBytes >= 4)
             {
-                result = GetInt();
+                result = ReadInt();
                 return true;
             }
             result = 0;
             return false;
         }
 
-        public bool TryGetUInt(out uint result)
+        public bool TryReadUInt(out uint result)
         {
             if (AvailableBytes >= 4)
             {
-                result = GetUInt();
+                result = ReadUInt();
                 return true;
             }
             result = 0;
             return false;
         }
 
-        public bool TryGetLong(out long result)
+        public bool TryReadLong(out long result)
         {
             if (AvailableBytes >= 8)
             {
-                result = GetLong();
+                result = ReadLong();
                 return true;
             }
             result = 0;
             return false;
         }
 
-        public bool TryGetULong(out ulong result)
+        public bool TryReadULong(out ulong result)
         {
             if (AvailableBytes >= 8)
             {
-                result = GetULong();
+                result = ReadULong();
                 return true;
             }
             result = 0;
             return false;
         }
 
-        public bool TryGetFloat(out float result)
+        public bool TryReadFloat(out float result)
         {
             if (AvailableBytes >= 4)
             {
-                result = GetFloat();
+                result = ReadFloat();
                 return true;
             }
             result = 0;
             return false;
         }
 
-        public bool TryGetDouble(out double result)
+        public bool TryReadDouble(out double result)
         {
             if (AvailableBytes >= 8)
             {
-                result = GetDouble();
+                result = ReadDouble();
                 return true;
             }
             result = 0;
             return false;
         }
 
-        public bool TryGetString(out string result)
+        public bool TryReadString(out string result)
         {
             if (AvailableBytes >= 2)
             {
                 ushort strSize = PeekUShort();
                 if (AvailableBytes >= strSize + 1)
                 {
-                    result = GetString();
+                    result = ReadString();
                     return true;
                 }
             }
@@ -578,10 +575,10 @@ namespace Ape.Netcode
             return false;
         }
 
-        public bool TryGetStringArray(out string[] result)
+        public bool TryReadStringArray(out string[] result)
         {
             ushort strArrayLength;
-            if (!TryGetUShort(out strArrayLength))
+            if (!TryReadUShort(out strArrayLength))
             {
                 result = null;
                 return false;
@@ -590,7 +587,7 @@ namespace Ape.Netcode
             result = new string[strArrayLength];
             for (int i = 0; i < strArrayLength; i++)
             {
-                if (!TryGetString(out result[i]))
+                if (!TryReadString(out result[i]))
                 {
                     result = null;
                     return false;
@@ -600,14 +597,14 @@ namespace Ape.Netcode
             return true;
         }
 
-        public bool TryGetBytesWithLength(out byte[] result)
+        public bool TryReadBytesWithLength(out byte[] result)
         {
             if (AvailableBytes >= 4)
             {
                 var length = PeekInt();
                 if (length >= 0 && AvailableBytes >= length + 4)
                 {
-                    result = GetBytesWithLength();
+                    result = ReadBytesWithLength();
                     return true;
                 }
             }

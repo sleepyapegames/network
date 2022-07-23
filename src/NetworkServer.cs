@@ -43,8 +43,8 @@ namespace Ape.Netcode
         private void ReceiveData(EndPoint endPoint, byte[] buffer, int receiveLength)
         {
             var reader = new NetworkReader(buffer);
-            var header = (NetworkHeader)reader.GetByte();
-            var packet = reader.Get<PacketTest>();
+            var header = (NetworkHeader)reader.ReadByte();
+            var packet = reader.Read<PacketTest>();
             Console.WriteLine($"{header}: {packet.Message}");
         }
     }
