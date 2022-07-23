@@ -1,5 +1,8 @@
+build:
+    dotnet build -c Debug
+
 server:
-    dotnet run --project test/Netcode.Server
+    ./test/Netcode.Server/bin/Debug/net6.0/Netcode.Server
 
 client:
-    dotnet run --project test/Netcode.Client
+    ./test/Netcode.Client/bin/Debug/net6.0/Netcode.Client
