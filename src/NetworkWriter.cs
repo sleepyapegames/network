@@ -323,5 +323,7 @@ namespace Ape.Netcode
             Put(checked((ushort)(size + 1)));
             Put(_stringBuffer, 0, size);
         }
+
+        public void Put<T>(T value) where T : NetworkPacket, new() => value.InternalSerialize(this);
     }
 }

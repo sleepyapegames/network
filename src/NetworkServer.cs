@@ -23,9 +23,11 @@ namespace Ape.Netcode
             _socket.Bind(endPoint);
         }
 
-        public void Send(EndPoint endPoint, byte[] data)
+        public void Send<T>(EndPoint endPoint, T packet) where T : NetworkPacket, new()
         {
-            _socket.SendTo(data, endPoint);
+            var writer = new NetworkWriter();
+            writer.Put(packet);
+            _socket.SendTo(writer.Data, endPoint);
         }
 
         public void Tick()
@@ -41,14 +43,9 @@ namespace Ape.Netcode
         private void ReceiveData(EndPoint endPoint, byte[] buffer, int receiveLength)
         {
             var reader = new NetworkReader(buffer);
-            var number = reader.GetInt();
-            var message = reader.GetString();
-            Console.WriteLine($"[{endPoint}] {number} {message}");
-
-            var writer = new NetworkWriter();
-            writer.Put(69);
-            writer.Put(420);
-            Send(endPoint, writer.Data);
+            var header = (NetworkHeader)reader.GetByte();
+            var packet = reader.Get<PacketTest>();
+            Console.WriteLine($"{header}: {packet.Message}");
         }
     }
 }

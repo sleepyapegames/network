@@ -354,6 +354,14 @@ namespace Ape.Netcode
             _position += length;
             return outgoingData;
         }
+
+        public T Get<T>() where T : NetworkPacket, new()
+        {
+            var packet = new T();
+            packet.InternalDeserialize(this);
+
+            return packet;
+        }
         #endregion
 
         #region PeekMethods

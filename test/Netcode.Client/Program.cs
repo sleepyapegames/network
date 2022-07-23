@@ -9,9 +9,10 @@ var writer = new NetworkWriter();
 writer.Put(69);
 writer.Put("Sixty Nine");
 
+var count = 0;
 while (true)
 {
-    client.Send(writer.Data);
+    client.Send(new PacketTest { Message = $"client {++count}" });
     client.Tick();
     Thread.Sleep(60);
 }

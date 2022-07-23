@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 
 namespace Ape.Netcode
 {
@@ -20,9 +19,11 @@ namespace Ape.Netcode
             _socket = new Socket(endPoint.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
         }
 
-        public void Send(byte[] data)
+        public void Send<T>(T packet) where T : NetworkPacket, new()
         {
-            _socket.SendTo(data, _remoteEndPoint);
+            var writer = new NetworkWriter();
+            writer.Put(packet);
+            _socket.SendTo(writer.Data, _remoteEndPoint);
         }
 
         public void Tick()
@@ -38,9 +39,9 @@ namespace Ape.Netcode
         private void ReceiveData(EndPoint endPoint, byte[] buffer, int receiveLength)
         {
             var reader = new NetworkReader(buffer);
-            var number1 = reader.GetInt();
-            var number2 = reader.GetInt();
-            Console.WriteLine($"[{endPoint}] {number1} {number2}");
+            var header = (NetworkHeader)reader.GetByte();
+
+            Console.WriteLine(header);
         }
     }
 }
